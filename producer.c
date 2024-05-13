@@ -8,18 +8,17 @@
 #define BUFFER_SIZE 8
 int main(int argc, char *argv[])
 {
-    printf("Producer run\n");
     int fpipe;
     ssize_t bytes_read;
 
-    if(argc != 2)
+    if(argc != 3)
     {
         perror("Argument error");
         exit(1);
     }
     
     char buffer[BUFFER_SIZE];
-    FILE* source_file = fopen("producer.txt", "r");
+    FILE* source_file = fopen(argv[2], "r");
     if(source_file==NULL)
     {
         perror("Failed to open source file ");
@@ -30,7 +29,7 @@ int main(int argc, char *argv[])
 
     if (fpipe < 0)
     {
-        printf("Błąd podczas otwierania potoku nazwanego do zapisu: %d.\n", fpipe);
+        printf("Failed to open named pipe: %d.\n", fpipe);
         exit(1);
     }
     while ((bytes_read = fread(buffer, sizeof(char), BUFFER_SIZE, source_file)) > 0)
@@ -40,12 +39,12 @@ int main(int argc, char *argv[])
 
         if (result < 0)
         {
-                printf("Błąd podczas zapisywania danych do potoku nazwanego.\n");
+                printf("Failed to write to named pipe.\n");
                 exit(1);
         }
         else
         {
-                printf("Dane zostały pomyślnie zapisane do potoku nazwanego.\n");
+                printf("%zu succesfully written to named pipe. Contents: %s\n", bytes_read, buffer);
         }
     }
     

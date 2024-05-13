@@ -17,8 +17,7 @@ void remove_fifo()
 
 int main(int argc, char *argv[]) 
 {
-    atexit(remove_fifo);
-    if (argc != 5) 
+    if (argc != 7) 
     {
         perror("Argument error");
         exit(1);
@@ -37,13 +36,11 @@ int main(int argc, char *argv[])
     
     if (pid1 == 0) 
     {
-        //printf("Consumer run\n");
-        execlp(argv[1],argv[1], argv[2], NULL);
+        execlp(argv[1], argv[1], argv[2], argv[3], NULL);
     } 
     else if (pid2 == 0) 
     {
-        //printf("Producer run\n");
-        execlp(argv[3],argv[3], argv[4], NULL);
+        execlp(argv[4], argv[4], argv[5], argv[6], NULL);
     } 
     else 
     {
@@ -52,5 +49,6 @@ int main(int argc, char *argv[])
         waitpid(pid2, &status, 0);
         
     }
+    atexit(remove_fifo);
     return 0;
 }

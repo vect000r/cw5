@@ -9,18 +9,17 @@
 
 int main(int argc, char *argv[])
 {
-    printf("Consumer run\n");
     int fpipe;
     ssize_t bytes_read;
 
-    if(argc != 2)
+    if(argc != 3)
     {
         perror("Argument error");
         exit(1);
     }
     
     char buffer[BUFFER_SIZE];
-    FILE* source_file = fopen("consumer.txt", "w");
+    FILE* source_file = fopen(argv[2], "w");
     if(source_file==NULL)
     {
         perror("Failed to open source file ");
@@ -31,22 +30,22 @@ int main(int argc, char *argv[])
 
     if (fpipe < 0)
     {
-        printf("Błąd podczas otwierania potoku nazwanego do zapisu: %d.\n", fpipe);
-        exit(EXIT_FAILURE);
+        printf("Failed to read from named pipe: %d.\n", fpipe);
+        exit(1);
     }
     while ((bytes_read = read(fpipe, buffer, BUFFER_SIZE)) > 0)
     {
-        // Zapisanie danych do potoku nazwanego
+        // Zapisanie danych do pliku
         int result = fwrite(buffer, sizeof(char), bytes_read, source_file);
         
         if (result < 0)
         {
-                printf("Błąd podczas zapisywania danych do pliku.\n");
+                printf("Failed to write to file.\n");
                 exit(1);
         }
         else
         {
-                printf("Dane zostały pomyślnie zapisane do pliku.\n");
+                printf("%zu bytes recieved and written to file. Content: %s\n", bytes_read, buffer);
         }
     }
     
